@@ -22,10 +22,10 @@ public class LimelightTest extends OpMode {
         telemetry.addData("Position", startingPosition);
         telemetry.addData("Direction", llPivot.getDirection());
 
-        if (gamepad1.leftBumperWasReleased()) {
+        if (gamepad1.leftBumperWasPressed()) {
             llPivot.setPosition(ballDetectionAngle);
         }
-        if (gamepad1.rightBumperWasReleased()) {
+        if (gamepad1.rightBumperWasPressed()) {
             llPivot.setPosition(hiveDetectionAngle);
         }
 

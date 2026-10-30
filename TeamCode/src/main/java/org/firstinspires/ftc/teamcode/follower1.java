@@ -16,11 +16,11 @@ import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 public class follower1 extends OpMode {
     private Follower follower;
     private final PoseFactory p = PoseFactory.degrees();
-    private final Pose startPose = p.of(24, 24, 0);
-    private final Pose park = p.of(48, 48, 40);
+    private final Pose startPose = p.of(0, 0, 270);
+    private final Pose flower1 = p.of(24, 0, 180);
 //    private final Pose controlPose = p.of(36, 60,45);
-    private Path startToPark() {
-        return line(startPose, park).linear(startPose, park);
+    private Path path1()     {
+        return line(startPose, flower1).linear(startPose, flower1);
     }
 //    private Path curvePark() {
 //        return curve(startPose, controlPose, park).linear(startPose, park);
@@ -28,6 +28,7 @@ public class follower1 extends OpMode {
 
     @Override
     public void init() {
+
         Scheduler.reset();
         follower = Constants.create(hardwareMap);
         follower.setPose(startPose);
@@ -37,7 +38,7 @@ public class follower1 extends OpMode {
 
     @Override
     public void start() {
-        schedule(follow(follower, startToPark()));
+        schedule(follow(follower, path1()));
     }
 
     @Override

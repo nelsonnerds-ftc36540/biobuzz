@@ -62,10 +62,15 @@ public class MecTest extends OpMode {
     DcMotor backRight;
     DcMotorEx intake;
     Servo scoopy;
+    Servo llPivot;
     double intakeSpeed = 0.8;
-
-    double scoopyUp;
-    double scoopyDown;
+    double scoopyUpPos = 0.875;
+    double scoopyDownPos = 0.5; // with jiggle
+    double ballDetectionAngle = 0.275;
+    double hiveDetectionAngle = 0.95;
+    boolean intaking = false;
+    boolean scoopyDown = false;
+    boolean limelightDown = false;
 
     // This declares the IMU needed to get the current direction the robot is facing
     IMU imu;
@@ -78,13 +83,15 @@ public class MecTest extends OpMode {
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         intake = hardwareMap.get(DcMotorEx.class, "intake");
         scoopy = hardwareMap.get(Servo.class, "scoopy");
+        llPivot = hardwareMap.get(Servo.class, "ll_pivot");
 
 
 
         // We set the left motors in reverse which is needed for drive trains where the left
         // motors are opposite to the right ones.
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
+
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
+        backRight.setDirection(DcMotor.Direction.REVERSE);
 
         // This uses RUN_USING_ENCODER to be more accurate.   If you don't have the encoder
         // wires, you should remove these
@@ -98,13 +105,14 @@ public class MecTest extends OpMode {
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection =
                 RevHubOrientationOnRobot.LogoFacingDirection.UP;
         RevHubOrientationOnRobot.UsbFacingDirection usbDirection =
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
 
         RevHubOrientationOnRobot orientationOnRobot = new
                 RevHubOrientationOnRobot(logoDirection, usbDirection);
         imu.initialize(new IMU.Parameters(orientationOnRobot));
 
-        intake.setPower(intakeSpeed);
+        llPivot.setPosition(hiveDetectionAngle);
+        scoopy.setPosition(scoopyUpPos);
     }
 
     @Override
@@ -113,12 +121,12 @@ public class MecTest extends OpMode {
         telemetry.addLine("Hold left bumper to drive in robot relative");
         telemetry.addLine("The left joystick sets the robot direction");
         telemetry.addLine("Moving the right joystick left and right turns the robot");
-
+        telemetry.addData("Scoopy Position", scoopy.getPosition());
 
 
         // If you press the A button, then you reset the Yaw to be zero from the way
         // the robot is currently pointing
-        if (gamepad1.a) {
+        if (gamepad1.x) {
             imu.resetYaw();
         }
         // If you press the left bumper, you get a drive from the point of view of the robot
@@ -128,13 +136,33 @@ public class MecTest extends OpMode {
         } else {
             driveFieldRelative(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
         }
-        if (gamepad1.dpad_down) {
-            scoopy.setPosition(scoopy.getPosition() - 0.1);
+        if (gamepad1.rightTriggerWasPressed()) {
+            if (scoopyDown) {
+                scoopy.setPosition(scoopyUpPos);
+                scoopyDown = false;
+            } else {
+                scoopy.setPosition(scoopyDownPos);
+                scoopyDown = true;
+            }
         }
-        if (gamepad1.dpad_up) {
-            scoopy.setPosition(scoopy.getPosition() + 0.1);
+        if (gamepad1.leftTriggerWasPressed()) {
+            if (limelightDown) {
+                llPivot.setPosition(hiveDetectionAngle);
+                limelightDown = false;
+            } else {
+                llPivot.setPosition(ballDetectionAngle);
+                limelightDown = true;
+            }
         }
-
+        if (gamepad1.aWasPressed()) {
+            if (intaking) {
+                intake.setPower(0);
+                intaking = false;
+            } else {
+                intake.setPower(intakeSpeed);
+                intaking = true;
+            }
+        }
 
         telemetry.update();
 
@@ -171,7 +199,7 @@ public class MecTest extends OpMode {
         double maxSpeed = 1.0;  // make this slower for outreaches
 
         // This is needed to make sure we don't pass > 1.0 to any wheel
-        // It allows us to keep all of the motors in proportion to what they should
+        // It allows us to keep all the motors in proportion to what they should
         // be and not get clipped
         maxPower = Math.max(maxPower, Math.abs(frontLeftPower));
         maxPower = Math.max(maxPower, Math.abs(frontRightPower));
