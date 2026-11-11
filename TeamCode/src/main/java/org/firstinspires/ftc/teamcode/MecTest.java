@@ -1,4 +1,4 @@
-/* Copyright (c) 2025 FIRST. All rights reserved.
+        /* Copyright (c) 2025 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided that
@@ -60,7 +60,7 @@ public class MecTest extends OpMode {
     DcMotor frontRight;
     DcMotor backLeft;
     DcMotor backRight;
-    DcMotorEx intake;
+    DcMotor intake;
     Servo scoopy;
     Servo llPivot;
     double intakeSpeed = 0.8;
@@ -81,7 +81,7 @@ public class MecTest extends OpMode {
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
-        intake = hardwareMap.get(DcMotorEx.class, "intake");
+        intake = hardwareMap.get(DcMotor.class, "intake");
         scoopy = hardwareMap.get(Servo.class, "scoopy");
         llPivot = hardwareMap.get(Servo.class, "ll_pivot");
 
