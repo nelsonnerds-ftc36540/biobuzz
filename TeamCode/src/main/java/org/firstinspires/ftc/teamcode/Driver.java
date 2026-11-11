@@ -18,7 +18,7 @@ public class Driver extends Subsystem {
 
         DrivePowers powers = ManualDrive.fieldCentric(
                 -gamepad1.left_stick_y,
-                gamepad1.left_stick_x,
+                -gamepad1.left_stick_x,
                 gamepad1.right_stick_x,
                 follower.pose().heading()
         );

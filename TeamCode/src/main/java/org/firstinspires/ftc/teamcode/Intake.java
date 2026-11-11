@@ -10,6 +10,7 @@ public class Intake extends Subsystem{
     public Intake(RobotContext ctx) {
         super(ctx);
         intake = ctx.hardwareMap.get(DcMotor.class, "intake");
+        intake.setDirection(DcMotor.Direction.REVERSE);
     }
 
     public void run() {

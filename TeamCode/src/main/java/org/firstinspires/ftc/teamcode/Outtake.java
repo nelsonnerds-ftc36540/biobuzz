@@ -4,6 +4,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
+// pollen power is 0.65
+// 
+
 public class Outtake extends Subsystem {
 
     private final DcMotorEx outtakeMotor;
@@ -14,10 +17,10 @@ public class Outtake extends Subsystem {
     }
     public void run(){
         if(gamepad1.dpadRightWasPressed() && power < 1){
-            power += .1;
+            power += .05;
         }
         if(gamepad1.dpadLeftWasPressed() && power > 0){
-            power -= .1;
+            power -= .05;
         }
         if(gamepad1.dpad_up){
             power = 0;
