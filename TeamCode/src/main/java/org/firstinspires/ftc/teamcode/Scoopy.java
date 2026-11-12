@@ -10,6 +10,7 @@ public class Scoopy extends Subsystem {
     public Scoopy(RobotContext ctx){
         super(ctx);
         scoopy = hardwareMap.get(Servo.class, "scoopy");
+        scoopy.setPosition(scoopyUpPos);
     }
     public void run(){
         if (gamepad1.rightTriggerWasPressed()) {

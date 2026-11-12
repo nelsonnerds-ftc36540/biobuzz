@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -11,6 +12,16 @@ public class UberNerdTele extends OpMode {
     private Scoopy scoopy;
     private Outtake outtake;
 
+    private LimelightController limelight;
+    private ShootController shootController;
+
+     enum State {
+        DRIVE,
+        SHOOT
+    }
+
+    State state = State.DRIVE;
+
     @Override
     public void init() {
 
@@ -19,6 +30,8 @@ public class UberNerdTele extends OpMode {
         intake = new Intake(ctx);
         scoopy = new Scoopy(ctx);
         outtake = new Outtake(ctx);
+        limelight = new LimelightController(ctx);
+        shootController = new ShootController(telemetry, driver, outtake, limelight);
     }
 
     @Override
@@ -29,13 +42,24 @@ public class UberNerdTele extends OpMode {
 
     @Override
     public void loop() {
-        driver.drive();
-        // intake
-        intake.run();
-        // shoot
-        outtake.run();
-        // scoop
-        scoopy.run();
+        telemetry.addData("Current State", state);
+        switch (state) {
+            case DRIVE:
+                driver.drive();
+                intake.run();
+                outtake.run();
+                scoopy.run();
+                if (gamepad1.right_stick_button && gamepad1.left_stick_button) {
+                    shootController.startShootSequence();
+                    state = State.SHOOT;
+                }
+                break;
+            case SHOOT:
+                shootController.update();
+                break;
+
+        }
+        telemetry.update();
     }
 
 }
